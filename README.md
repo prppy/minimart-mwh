@@ -1,0 +1,1 @@
+A full-stack minimart system project developed for Muhammadiyah Welfare Home. Developed using React, Node Express, ShadCN, Tailwind and Firebase.
