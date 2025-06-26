@@ -1,85 +1,142 @@
-import React from 'react';
-import { 
-  HStack, 
-  Button, 
-  ButtonText, 
-  Image, 
+import React, { useState } from "react";
+import {
   Box,
-  Icon
-} from '@gluestack-ui/themed';
-import { FaShoppingCart, FaRegSmile, FaMedal, FaUser } from 'react-icons/fa';
+  HStack,
+  VStack,
+  Image,
+  Text,
+  Pressable,
+  useBreakpointValue,
+  Center,
+} from "@gluestack-ui/themed";
 
-const Header = () => {
+const Header = ({ activeTab = "catalogue", onTabChange }) => {
+  const [currentTab, setCurrentTab] = useState(activeTab);
+
+  const logoSize = useBreakpointValue({ base: 40, md: 48 });
+  const logoTextSize = useBreakpointValue({ base: "lg", md: "xl" });
+
+  const tabs = [
+    { id: "catalogue", label: "Catalogue" },
+    { id: "leaderboard", label: "Leaderboard" },
+    { id: "feedback", label: "Feedback" },
+    { id: "profile", label: "Profile" },
+  ];
+
+  const handleTabPress = (tabId) => {
+    setCurrentTab(tabId);
+    if (onTabChange) {
+      onTabChange(tabId);
+    }
+  };
+
   return (
     <Box
       backgroundColor="$white"
-      paddingX="$8"
-      paddingY="$4"
-      borderBottomWidth={1}
-      borderBottomColor="$gray200"
-      flexDirection="row"
-      justifyContent="space-between"
-      alignItems="center"
-      width="100%"
-      minHeight={72}
+      shadowColor="$black"
+      shadowOffset={{ width: 0, height: 4 }}
+      shadowOpacity={0.08}
+      shadowRadius={8}
+      elevation={6}
+      px="$4"
+      py="$4"
+      _web={{
+        position: "sticky",
+        top: 0,
+        zIndex: 10,
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
+      }}
     >
-      <HStack alignItems="center" space="$4">
-        <Image 
-          source={require('../../assets/mwh-logo.svg')} 
-          alt="MWH Logo" 
-          height={48} 
-          width={48} 
-          resizeMode="contain"
-        />
-      </HStack>
-      <HStack space="$3" alignItems="center">
-        <Button 
-          variant="outline" 
-          size="md"
-          backgroundColor="$white"
-          borderColor="$blue600"
-          px="$4"
-          py="$2"
-        >
-          <Icon as={FaShoppingCart} size="sm" color="$blue600" mr="$2" />
-          <ButtonText color="$blue900" fontWeight="$semibold">Catalogue</ButtonText>
-        </Button>
-        <Button 
-          variant="outline" 
-          size="md"
-          backgroundColor="$white"
-          borderColor="$blue600"
-          px="$4"
-          py="$2"
-        >
-          <Icon as={FaRegSmile} size="sm" color="$blue600" mr="$2" />
-          <ButtonText color="$blue900" fontWeight="$semibold">Feedback</ButtonText>
-        </Button>
-        <Button 
-          variant="solid" 
-          size="md" 
-          backgroundColor="$blue600"
-          borderColor="$blue600"
-          px="$4"
-          py="$2"
-        >
-          <Icon as={FaMedal} size="sm" color="$white" mr="$2" />
-          <ButtonText color="$white" fontWeight="$semibold">Leaderboard</ButtonText>
-        </Button>
-        <Button 
-          variant="solid" 
-          size="md" 
-          backgroundColor="$red500"
-          borderColor="$red500"
-          px="$4"
-          py="$2"
-        >
-          <Icon as={FaUser} size="sm" color="$white" mr="$2" />
-          <ButtonText color="$white" fontWeight="$semibold">Sign in</ButtonText>
-        </Button>
+      <HStack
+        px="$6"
+        width="100%"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        {/* Left: Logo and Title */}
+        <HStack alignItems="center" space="$4">
+          <Image
+            source={require("../../assets/mwh-logo.svg")}
+            alt="MWH Logo"
+            width={logoSize}
+            height={logoSize}
+            resizeMode="contain"
+            mr="$2" // adds some spacing directly
+          />
+          <VStack space="$1">
+            <Text
+              fontSize={logoTextSize}
+              fontWeight="$bold"
+              color="$primary700"
+              lineHeight="$xs"
+            >
+              Muhammadiyah Welfare Home
+            </Text>
+            <Text fontSize="$xs" color="$gray600" lineHeight="$xs">
+              Web-based Minimart
+            </Text>
+          </VStack>
+        </HStack>
+
+        {/* Right: Tabs */}
+        <HStack space="$5">
+          {tabs.map((tab) => {
+            const isActive = currentTab === tab.id;
+            return (
+              <Pressable key={tab.id} onPress={() => handleTabPress(tab.id)}>
+                <Box
+                  px="$4"
+                  py="$2"
+                  position="relative"
+                  _web={{
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                    _hover: {
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+                      color: "$primary600",
+                    },
+                  }}
+                >
+                  <Text
+                    fontSize="$md"
+                    fontWeight={isActive ? "$semibold" : "$medium"}
+                    color={isActive ? "$primary600" : "$gray700"}
+                  >
+                    {tab.label}
+                  </Text>
+                  {isActive && (
+                    <Box
+                      position="absolute"
+                      bottom={0}
+                      left={0}
+                      right={0}
+                      height={2}
+                      backgroundColor="$primary600"
+                      borderRadius="$full"
+                      _web={{
+                        animation: "slideIn 0.3s ease",
+                        "@keyframes slideIn": {
+                          "0%": {
+                            transform: "scaleX(0)",
+                            opacity: 0,
+                          },
+                          "100%": {
+                            transform: "scaleX(1)",
+                            opacity: 1,
+                          },
+                        },
+                      }}
+                    />
+                  )}
+                </Box>
+              </Pressable>
+            );
+          })}
+        </HStack>
       </HStack>
     </Box>
   );
 };
 
-export default Header; 
+export default Header;
