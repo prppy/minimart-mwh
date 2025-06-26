@@ -1,16 +1,22 @@
-import React from 'react';
-import { 
-  Box, 
-  VStack, 
-  Image, 
-  Text, 
+import React from "react";
+import {
+  Box,
+  VStack,
+  Image,
+  Text,
   Heading,
-  Pressable
-} from '@gluestack-ui/themed';
+  Pressable,
+} from "@gluestack-ui/themed";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onProductPress }) => {
+  const handlePress = () => {
+    if (onProductPress) {
+      onProductPress(product);
+    }
+  };
+
   return (
-    <Pressable>
+    <Pressable onPress={handlePress}>
       <Box
         backgroundColor="$white"
         borderRadius="$lg"
@@ -25,17 +31,17 @@ const ProductCard = ({ product }) => {
         alignItems="center"
         justifyContent="flex-start"
         minHeight={320}
-        _web={{ 
-          cursor: 'pointer',
-          transition: 'all 0.2s ease-in-out',
-          ':hover': { 
-            transform: 'translateY(-2px)',
-            shadowColor: '$gray500',
+        _web={{
+          cursor: "pointer",
+          transition: "all 0.2s ease-in-out",
+          ":hover": {
+            transform: "translateY(-2px)",
+            shadowColor: "$gray500",
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.15,
             shadowRadius: 8,
-            elevation: 4
-          } 
+            elevation: 4,
+          },
         }}
       >
         <VStack space="$3" alignItems="center">
@@ -48,8 +54,8 @@ const ProductCard = ({ product }) => {
             alignItems="center"
             justifyContent="center"
           >
-            <Image 
-              source={product.image} 
+            <Image
+              source={product.image}
               alt={product.name}
               width={160}
               height={160}
@@ -57,10 +63,20 @@ const ProductCard = ({ product }) => {
             />
           </Box>
           <VStack space="$1" alignItems="center">
-            <Heading size="sm" color="$gray800" fontWeight="$semibold" textAlign="center">
+            <Heading
+              size="sm"
+              color="$gray800"
+              fontWeight="$semibold"
+              textAlign="center"
+            >
               {product.name}
             </Heading>
-            <Text size="md" color="$blue600" fontWeight="$semibold" textAlign="center">
+            <Text
+              size="md"
+              color="$blue600"
+              fontWeight="$semibold"
+              textAlign="center"
+            >
               {product.points}pts
             </Text>
           </VStack>
@@ -70,4 +86,4 @@ const ProductCard = ({ product }) => {
   );
 };
 
-export default ProductCard; 
+export default ProductCard;
