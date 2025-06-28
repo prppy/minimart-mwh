@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, HStack, Icon } from "@gluestack-ui/themed";
 import Feather from "react-native-vector-icons/Feather";
-import NavCard from "../../components/ProductDetails/NavCard";
+import NavCard from "../../../components/ProductDetails/NavCard";
 
 const Feedback = ({ onNavigateToProductRequest, onNavigateToRateUs }) => {
   return (
