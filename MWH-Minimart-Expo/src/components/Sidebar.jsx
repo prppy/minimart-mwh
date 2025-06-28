@@ -1,10 +1,10 @@
-import React from 'react';
-import { 
-  Box, 
-  VStack, 
-  HStack, 
-  Text, 
-  Heading, 
+import React from "react";
+import {
+  Box,
+  VStack,
+  HStack,
+  Text,
+  Heading,
   Checkbox,
   CheckboxIndicator,
   CheckboxLabel,
@@ -14,9 +14,10 @@ import {
   SliderFilledTrack,
   SliderThumb,
   Icon,
-  Divider
-} from '@gluestack-ui/themed';
-import { FaTimes } from 'react-icons/fa';
+  Divider,
+} from "@gluestack-ui/themed";
+// import { FaTimes } from 'react-icons/fa';
+import { CloseIcon } from "@gluestack-ui/themed";
 
 const Sidebar = ({
   allCategories,
@@ -26,7 +27,7 @@ const Sidebar = ({
   selectedTypes,
   handleTypeChange,
   points,
-  setPoints
+  setPoints,
 }) => {
   return (
     <Box
@@ -49,7 +50,7 @@ const Sidebar = ({
             Category
           </Heading>
           <HStack flexWrap="wrap" gap="$2" mb="$2">
-            {selectedCategories.map(category => (
+            {selectedCategories.map((category) => (
               <Pressable
                 key={category}
                 onPress={() => handleCategoryChange(category)}
@@ -69,13 +70,13 @@ const Sidebar = ({
                   <Text size="sm" color="$blue800" fontWeight="$bold">
                     {category}
                   </Text>
-                  <Icon as={FaTimes} size="xs" color="$blue600" ml="$1" />
+                  <CloseIcon size="xs" color="$blue600" ml="$1" />
                 </HStack>
               </Pressable>
             ))}
           </HStack>
           <VStack space="$2">
-            {allCategories.map(category => (
+            {allCategories.map((category) => (
               <HStack key={category} alignItems="center" space="$2">
                 <Checkbox
                   value={category}
@@ -99,7 +100,7 @@ const Sidebar = ({
             Type
           </Heading>
           <HStack flexWrap="wrap" gap="$2" mb="$2">
-            {selectedTypes.map(type => (
+            {selectedTypes.map((type) => (
               <Pressable
                 key={type}
                 onPress={() => handleTypeChange(type)}
@@ -119,13 +120,13 @@ const Sidebar = ({
                   <Text size="sm" color="$blue800" fontWeight="$bold">
                     {type}
                   </Text>
-                  <Icon as={FaTimes} size="xs" color="$blue600" ml="$1" />
+                  <CloseIcon size="xs" color="$blue600" ml="$1" />
                 </HStack>
               </Pressable>
             ))}
           </HStack>
           <VStack space="$2">
-            {allTypes.map(type => (
+            {allTypes.map((type) => (
               <HStack key={type} alignItems="center" space="$2">
                 <Checkbox
                   value={type}
@@ -164,8 +165,12 @@ const Sidebar = ({
               <SliderThumb backgroundColor="$blue600" />
             </Slider>
             <HStack justifyContent="space-between" mt="$1">
-              <Text size="sm" color="$gray500">0</Text>
-              <Text size="sm" color="$gray500">{points}pts</Text>
+              <Text size="sm" color="$gray500">
+                0
+              </Text>
+              <Text size="sm" color="$gray500">
+                {points}pts
+              </Text>
             </HStack>
           </VStack>
         </VStack>
@@ -174,4 +179,4 @@ const Sidebar = ({
   );
 };
 
-export default Sidebar; 
+export default Sidebar;

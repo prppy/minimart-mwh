@@ -12,7 +12,9 @@ import {
   useBreakpointValue,
   Icon,
 } from "@gluestack-ui/themed";
-import { FaSearch } from "react-icons/fa";
+// import { FaSearch } from "react-icons/fa";
+import { SearchIcon } from "@gluestack-ui/themed";
+
 import Sidebar from "../components/Sidebar";
 import ProductCard from "../components/ProductCard";
 import products from "../data/products.js";
@@ -115,7 +117,7 @@ const Catalogue = ({ onProductPress }) => {
               mr="$6"
             >
               <InputSlot pl="$4">
-                <Icon as={FaSearch} size="sm" color="$gray500" />
+                <SearchIcon size="md" color="$gray600" />
               </InputSlot>
               <InputField
                 placeholder="Search"
@@ -160,11 +162,14 @@ const Catalogue = ({ onProductPress }) => {
           </HStack>
           {/* Product Grid */}
           <FlatList
+            key={`flatlist-${numColumns}`}
             data={filteredAndSortedProducts}
             renderItem={renderProduct}
             keyExtractor={(item) => item.id.toString()}
             numColumns={numColumns}
-            columnWrapperStyle={{ justifyContent: "flex-start" }}
+            columnWrapperStyle={
+              numColumns > 1 ? { justifyContent: "flex-start" } : null
+            }
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
               paddingBottom: 40,
