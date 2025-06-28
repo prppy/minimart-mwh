@@ -10,7 +10,7 @@ import {
   Center,
 } from "@gluestack-ui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import MWHLogo from "./MWHLogo";
 const Header = ({ activeTab = "catalogue", onTabChange }) => {
   const [currentTab, setCurrentTab] = useState(activeTab);
 
@@ -71,20 +71,14 @@ const Header = ({ activeTab = "catalogue", onTabChange }) => {
       >
         {/* Left: Logo and Title */}
         <HStack alignItems="center" space="$4">
-          <Image
-            source={require("../../assets/mwh-logo.svg")}
-            alt="MWH Logo"
-            width={logoSize}
-            height={logoSize}
-            resizeMode="contain"
-            mr="$2" // adds some spacing directly
-          />
+          <MWHLogo style={{ marginRight: 10 }} />
+
           <VStack space="$1">
             <Text
               fontSize={logoTextSize}
               fontWeight="$bold"
               color="$primary700"
-              lineHeight="$xs"
+              // lineHeight={logoTextSize * 1.2}
             >
               {currentTab.toUpperCase()}
             </Text>
