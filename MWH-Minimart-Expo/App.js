@@ -6,10 +6,11 @@ import Footer from "./src/components/Footer";
 import Catalogue from "./src/screens/Catalogue";
 import ProductDetails from "./src/screens/ProductDetails";
 import Leaderboard from "./src/screens/Leaderboard";
-import Feedback from "./src/screens/Feedback";
+import Feedback from "./src/screens/feedback/Feedback";
 import Profile from "./src/screens/Profile";
 import * as ScreenOrientation from "expo-screen-orientation";
-
+import ProductRequest from "./src/screens/feedback/ProductRequest";
+import RateUs from "./src/screens/feedback/RateUs";
 export default function App() {
   // Navigation state
   const [currentView, setCurrentView] = useState("catalogue");
@@ -67,8 +68,17 @@ export default function App() {
         return <Leaderboard />;
 
       case "feedback":
-        return <Feedback />;
+        return (
+          <Feedback
+            onNavigateToProductRequest={() => setCurrentView("productRequest")}
+            onNavigateToRateUs={() => setCurrentView("rateUs")} // if you want RateUs too
+          />
+        );
+      case "productRequest":
+        return <ProductRequest onBack={() => setCurrentView("feedback")} />;
 
+      case "rateUs":
+        return <RateUs />; // import this component!
       case "profile":
         return <Profile />;
 
