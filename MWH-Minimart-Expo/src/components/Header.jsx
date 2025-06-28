@@ -9,6 +9,7 @@ import {
   useBreakpointValue,
   Center,
 } from "@gluestack-ui/themed";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Header = ({ activeTab = "catalogue", onTabChange }) => {
   const [currentTab, setCurrentTab] = useState(activeTab);
@@ -52,6 +53,9 @@ const Header = ({ activeTab = "catalogue", onTabChange }) => {
       elevation={6}
       px="$4"
       py="$4"
+      _ios={{
+        marginTop: 20,
+      }}
       _web={{
         position: "sticky",
         top: 0,

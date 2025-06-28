@@ -1,40 +1,36 @@
-import React from 'react';
-import { 
-  Box, 
-  HStack, 
-  Image, 
-  Text 
-} from '@gluestack-ui/themed';
+import React from "react";
+import { Box, HStack, Image, Text } from "@gluestack-ui/themed";
+import { Dimensions } from "react-native";
+import MWHLogo from "./MWHLogo";
+const screenHeight = Dimensions.get("window").height;
+const footerHeight = screenHeight * 0.05; // 10% of screen height
 
 const Footer = () => {
   return (
     <Box
       backgroundColor="$white"
-      paddingY="$3"
+      height={footerHeight}
+      paddingX={6}
       borderTopWidth={1}
-      borderTopColor="$gray200"
+      borderTopColor="#d6d5d2"
+      justifyContent="center"
       alignItems="center"
       width="100%"
     >
-      <HStack justifyContent="center" alignItems="center" space="$2">
-        <Image 
-          source={require('../../assets/mwh-logo.svg')} 
-          alt="MWH Logo" 
-          height={28} 
-          width={28} 
-          resizeMode="contain"
-        />
-        <Text 
-          size="xs" 
-          color="$gray500" 
+      <HStack justifyContent="center" alignItems="center" space={4}>
+        <MWHLogo style={{ marginRight: 10 }} />
+        <Text
+          size="sm"
+          color="$gray500"
           textAlign="center"
           fontWeight="$normal"
         >
-          MUHAMMADIYAH WELFARE HOME © 2025 | An institution of MUHAMMADIYAH ASSOCIATION
+          MUHAMMADIYAH WELFARE HOME © 2025 | An institution of MUHAMMADIYAH
+          ASSOCIATION
         </Text>
       </HStack>
     </Box>
   );
 };
 
-export default Footer; 
+export default Footer;

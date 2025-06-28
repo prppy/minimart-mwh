@@ -11,6 +11,8 @@ import Profile from "./src/screens/Profile";
 import * as ScreenOrientation from "expo-screen-orientation";
 import ProductRequest from "./src/screens/feedback/ProductRequest";
 import RateUs from "./src/screens/feedback/RateUs";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+
 export default function App() {
   // Navigation state
   const [currentView, setCurrentView] = useState("catalogue");
@@ -88,19 +90,21 @@ export default function App() {
   };
 
   return (
-    <GluestackUIProvider config={config}>
-      <Box flex={1} backgroundColor="$gray50">
-        {/* Persistent Header */}
-        <Header
-          activeTab={
-            currentView === "productDetails" ? "catalogue" : currentView
-          }
-          onTabChange={handleTabChange}
-        />
-
-        {/* Dynamic Content */}
-        {renderCurrentView()}
-      </Box>
-    </GluestackUIProvider>
+    <SafeAreaProvider>
+      <GluestackUIProvider config={config}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Box flex={1} backgroundColor="$gray50">
+            <Header
+              activeTab={
+                currentView === "productDetails" ? "catalogue" : currentView
+              }
+              onTabChange={handleTabChange}
+            />
+            {renderCurrentView()}
+            <Footer />
+          </Box>
+        </SafeAreaView>
+      </GluestackUIProvider>
+    </SafeAreaProvider>
   );
 }
