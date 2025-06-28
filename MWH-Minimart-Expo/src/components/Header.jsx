@@ -82,7 +82,7 @@ const Header = ({ activeTab = "catalogue", onTabChange }) => {
               color="$primary700"
               lineHeight="$xs"
             >
-              Muhammadiyah Welfare Home
+              {currentTab.toUpperCase()}
             </Text>
             <Text fontSize="$xs" color="$gray600" lineHeight="$xs">
               Web-based Minimart
