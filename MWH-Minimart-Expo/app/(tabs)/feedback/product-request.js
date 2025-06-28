@@ -10,8 +10,8 @@ import {
   ButtonText,
   InputField,
 } from "@gluestack-ui/themed";
-
-export default function ProductRequest({ onBack }) {
+import { router } from "expo-router";
+export default function ProductRequest() {
   return (
     <Center flex={1} bg="$white" px={4}>
       {/* padding left/right for margin */}
@@ -20,7 +20,7 @@ export default function ProductRequest({ onBack }) {
         borderColor="#ebeae8"
         borderRadius={15}
         padding={30}
-        width={400}
+        width={500}
         maxWidth="100%" // make responsive on smaller screens
         alignItems="stretch" // stretch children width-wise
         backgroundColor="$white"
@@ -31,35 +31,34 @@ export default function ProductRequest({ onBack }) {
         elevation={3}
       >
         <VStack space={4}>
-          {" "}
           {/* vertical stack with spacing */}
-          <Box paddingVertical={10}>
-            <Text mb={10} fontSize="$md">
+          <Box paddingVertical={15}>
+            <Text mb={20} fontSize="$xl">
               Your Name
             </Text>
-            <Input variant="outline">
-              <InputField placeholder="Enter name" />
+            <Input variant="outline" borderRadius={10} height={50}>
+              <InputField placeholder="Enter name" fontSize="$xl" />
             </Input>
           </Box>
           <Box paddingVertical={10}>
-            <Text mb={10} fontSize="$md">
+            <Text mb={20} fontSize="$xl">
               Product Requested
             </Text>
-            <Input variant="outline">
-              <InputField placeholder="Enter product name" />
+            <Input variant="outline" borderRadius={10} height={50}>
+              <InputField placeholder="Enter product name" fontSize="$xl" />
             </Input>
           </Box>
           <Button
-            size="lg"
-            mt={10}
+            size="xl"
+            mt={20}
             width="100%"
             onPress={() => alert("Submitted!")}
             backgroundColor="#D5442A" // TODO: change to color theme (secondary?)
           >
             <ButtonText>Submit</ButtonText>
           </Button>
-          <Pressable onPress={onBack}>
-            <Text mt={20} color="$primary700" textAlign="center">
+          <Pressable onPress={() => router.back()}>
+            <Text mt={20} color="$primary700" textAlign="center" fontSize="$xl">
               Back
             </Text>
           </Pressable>
