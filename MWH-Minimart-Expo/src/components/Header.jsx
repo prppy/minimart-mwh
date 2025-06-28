@@ -13,8 +13,20 @@ import {
 const Header = ({ activeTab = "catalogue", onTabChange }) => {
   const [currentTab, setCurrentTab] = useState(activeTab);
 
+  // const logoSize = useBreakpointValue({ base: 40, md: 48 });
+  // const logoTextSize = useBreakpointValue({ base: "lg", md: "xl" });
+
+  // had exception error with the above
   const logoSize = useBreakpointValue({ base: 40, md: 48 });
-  const logoTextSize = useBreakpointValue({ base: "lg", md: "xl" });
+  const fontSizes = {
+    lg: 18,
+    xl: 24,
+  };
+
+  const logoTextSize = useBreakpointValue({
+    base: fontSizes.lg,
+    md: fontSizes.xl,
+  });
 
   const tabs = [
     { id: "catalogue", label: "Catalogue" },

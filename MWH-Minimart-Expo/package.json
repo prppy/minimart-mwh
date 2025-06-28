@@ -27,7 +27,8 @@
     "react-icons": "^5.5.0",
     "react-native": "0.79.4",
     "react-native-svg": "^15.12.0",
-    "react-native-web": "^0.20.0"
+    "react-native-web": "^0.20.0",
+    "expo-screen-orientation": "~8.1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

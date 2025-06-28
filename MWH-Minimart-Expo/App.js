@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GluestackUIProvider, Box } from "@gluestack-ui/themed";
 import { config } from "./gluestack-ui.config";
 import Header from "./src/components/Header";
@@ -8,12 +8,20 @@ import ProductDetails from "./src/screens/ProductDetails";
 import Leaderboard from "./src/screens/Leaderboard";
 import Feedback from "./src/screens/Feedback";
 import Profile from "./src/screens/Profile";
+import * as ScreenOrientation from "expo-screen-orientation";
 
 export default function App() {
   // Navigation state
   const [currentView, setCurrentView] = useState("catalogue");
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  // screen orietnation
+  useEffect(() => {
+    const unlockScreenOerientation = async () => {
+      await ScreenOrientation.unlockAsync();
+    };
+    unlockScreenOerientation();
+  }, []);
   // Navigation handlers
   const handleTabChange = (tabId) => {
     setCurrentView(tabId);
