@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "MWH-Minimart-Expo",
+    "scheme": "mwh-minimart-expo",
     "slug": "MWH-Minimart-Expo",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -31,6 +32,7 @@
       ]
     ],
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/favicon.png"
     }
   }

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { useRouter } from "expo-router";
 import {
   Box,
   VStack,
@@ -12,14 +13,14 @@ import {
   useBreakpointValue,
   Icon,
 } from "@gluestack-ui/themed";
-// import { FaSearch } from "react-icons/fa";
-import { SearchIcon } from "@gluestack-ui/themed";
+import { FaSearch } from "react-icons/fa";
+import Sidebar from "../../components/Sidebar.jsx";
+import ProductCard from "../../components/ProductCard.jsx";
+import products from "../../data/products.js";
 
-import Sidebar from "../components/Sidebar";
-import ProductCard from "../components/ProductCard";
-import products from "../data/products.js";
+const Catalogue = () => {
+  const router = useRouter();
 
-const Catalogue = ({ onProductPress }) => {
   const allCategories = useMemo(
     () => [...new Set(products.map((p) => p.category))],
     []
@@ -53,6 +54,10 @@ const Catalogue = ({ onProductPress }) => {
     );
   };
 
+  const handleProductPress = (product) => {
+    router.push(`/product/${product.id}`);
+  };
+
   const filteredAndSortedProducts = useMemo(() => {
     let sortedProducts = [...products];
 
@@ -78,7 +83,7 @@ const Catalogue = ({ onProductPress }) => {
   }, [selectedCategories, selectedTypes, points, searchQuery, sortOrder]);
 
   const renderProduct = ({ item }) => (
-    <ProductCard product={item} onProductPress={onProductPress} />
+    <ProductCard product={item} onProductPress={handleProductPress} />
   );
 
   return (
@@ -117,7 +122,7 @@ const Catalogue = ({ onProductPress }) => {
               mr="$6"
             >
               <InputSlot pl="$4">
-                <SearchIcon size="md" color="$gray600" />
+                <Icon as={FaSearch} size="sm" color="$gray500" />
               </InputSlot>
               <InputField
                 placeholder="Search"
@@ -162,14 +167,11 @@ const Catalogue = ({ onProductPress }) => {
           </HStack>
           {/* Product Grid */}
           <FlatList
-            key={`flatlist-${numColumns}`}
             data={filteredAndSortedProducts}
             renderItem={renderProduct}
             keyExtractor={(item) => item.id.toString()}
             numColumns={numColumns}
-            columnWrapperStyle={
-              numColumns > 1 ? { justifyContent: "flex-start" } : null
-            }
+            columnWrapperStyle={{ justifyContent: "flex-start" }}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
               paddingBottom: 40,

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRouter, usePathname } from "expo-router";
 import {
   Box,
   HStack,
@@ -7,36 +8,41 @@ import {
   Text,
   Pressable,
   useBreakpointValue,
-  Center,
 } from "@gluestack-ui/themed";
 
 const Header = ({ activeTab = "catalogue", onTabChange }) => {
-  const [currentTab, setCurrentTab] = useState(activeTab);
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // const logoSize = useBreakpointValue({ base: 40, md: 48 });
-  // const logoTextSize = useBreakpointValue({ base: "lg", md: "xl" });
-
-  // had exception error with the above
-  const logoSize = useBreakpointValue({ base: 40, md: 48 });
-  const fontSizes = {
-    lg: 18,
-    xl: 24,
+  // Get current tab based on pathname
+  const getCurrentTab = () => {
+    if (pathname.startsWith("/product/")) return "catalogue";
+    if (pathname === "/" || pathname === "/catalogue") return "catalogue";
+    if (pathname === "/leaderboard") return "leaderboard";
+    if (pathname === "/feedback") return "feedback";
+    if (pathname === "/profile") return "profile";
+    return "catalogue";
   };
 
-  const logoTextSize = useBreakpointValue({
-    base: fontSizes.lg,
-    md: fontSizes.xl,
-  });
+  const currentTab = getCurrentTab();
+
+  const logoSize = useBreakpointValue({ base: 40, md: 48 });
+  const logoTextSize = useBreakpointValue({ base: "lg", md: "xl" });
 
   const tabs = [
-    { id: "catalogue", label: "Catalogue" },
-    { id: "leaderboard", label: "Leaderboard" },
-    { id: "feedback", label: "Feedback" },
-    { id: "profile", label: "Profile" },
+    { id: "catalogue", label: "Catalogue", path: "/catalogue" },
+    { id: "leaderboard", label: "Leaderboard", path: "/leaderboard" },
+    { id: "feedback", label: "Feedback", path: "/feedback" },
+    { id: "profile", label: "Profile", path: "/profile" },
   ];
 
-  const handleTabPress = (tabId) => {
-    setCurrentTab(tabId);
+  const handleTabPress = (tabId, path) => {
+    if (path === "/catalogue") {
+      router.push("/catalogue");
+    } else {
+      router.push(path);
+    }
+
     if (onTabChange) {
       onTabChange(tabId);
     }
@@ -68,12 +74,12 @@ const Header = ({ activeTab = "catalogue", onTabChange }) => {
         {/* Left: Logo and Title */}
         <HStack alignItems="center" space="$4">
           <Image
-            source={require("../../assets/mwh-logo.svg")}
+            source={require("../assets/mwh-logo.svg")}
             alt="MWH Logo"
             width={logoSize}
             height={logoSize}
             resizeMode="contain"
-            mr="$2" // adds some spacing directly
+            mr="$2"
           />
           <VStack space="$1">
             <Text
@@ -82,10 +88,10 @@ const Header = ({ activeTab = "catalogue", onTabChange }) => {
               color="$primary700"
               lineHeight="$xs"
             >
-              {currentTab.toUpperCase()}
+              {currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}
             </Text>
             <Text fontSize="$xs" color="$gray600" lineHeight="$xs">
-              Web-based Minimart
+              MWH Minimart
             </Text>
           </VStack>
         </HStack>
@@ -95,7 +101,10 @@ const Header = ({ activeTab = "catalogue", onTabChange }) => {
           {tabs.map((tab) => {
             const isActive = currentTab === tab.id;
             return (
-              <Pressable key={tab.id} onPress={() => handleTabPress(tab.id)}>
+              <Pressable
+                key={tab.id}
+                onPress={() => handleTabPress(tab.id, tab.path)}
+              >
                 <Box
                   px="$4"
                   py="$2"
