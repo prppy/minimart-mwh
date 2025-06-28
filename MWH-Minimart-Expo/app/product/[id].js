@@ -15,8 +15,9 @@ import {
   useBreakpointValue,
   Icon,
 } from "@gluestack-ui/themed";
-import { FaArrowLeft, FaShoppingCart, FaHeart } from "react-icons/fa";
+// import { FaArrowLeft, FaShoppingCart, FaHeart } from "react-icons/fa";
 import products from "../../data/products.js";
+import { FontAwesome } from "@expo/vector-icons";
 
 const ProductDetails = () => {
   const { id: productId } = useLocalSearchParams();
@@ -79,7 +80,12 @@ const ProductDetails = () => {
             }}
           >
             <HStack alignItems="center" space="$2">
-              <Icon as={FaArrowLeft} size="sm" color="$gray700" />
+              <Icon
+                as={FontAwesome}
+                name="arrow-left"
+                size="sm"
+                color="$gray700"
+              />
               <Text color="$gray700" fontWeight="$medium" fontSize="$md">
                 Back to Catalogue
               </Text>
@@ -144,7 +150,7 @@ const ProductDetails = () => {
                   fontSize="$sm"
                   fontWeight="$semibold"
                   textTransform="uppercase"
-                  letterSpacing="$wide"
+                  letterSpacing={1.2}
                 >
                   {product.category}
                 </Text>
@@ -190,7 +196,7 @@ const ProductDetails = () => {
                   borderRadius="$xl"
                   py="$4"
                   px="$8"
-                  width="100%"
+                  minHeight={55}
                   onPress={() => handleAddToCart(product)}
                   _web={{
                     cursor: "pointer",
@@ -201,20 +207,19 @@ const ProductDetails = () => {
                     },
                   }}
                 >
-                  <HStack
-                    alignItems="center"
-                    space="$3"
-                    justifyContent="center"
+                  <Icon
+                    as={FontAwesome}
+                    name="shopping-cart"
+                    size="md"
+                    color="$white"
+                  />
+                  <ButtonText
+                    color="$white"
+                    fontSize="$lg"
+                    fontWeight="$semibold"
                   >
-                    <Icon as={FaShoppingCart} size="md" color="$white" />
-                    <ButtonText
-                      color="$white"
-                      fontSize="$lg"
-                      fontWeight="$semibold"
-                    >
-                      Redeem with Points
-                    </ButtonText>
-                  </HStack>
+                    Redeem with Points
+                  </ButtonText>
                 </Button>
 
                 <Button
@@ -224,6 +229,7 @@ const ProductDetails = () => {
                   borderRadius="$xl"
                   py="$4"
                   px="$8"
+                  minHeight={55}
                   width="100%"
                   backgroundColor="$white"
                   onPress={() => handleWishlist(product)}
@@ -242,7 +248,12 @@ const ProductDetails = () => {
                     space="$3"
                     justifyContent="center"
                   >
-                    <Icon as={FaHeart} size="md" color="$gray700" />
+                    <Icon
+                      as={FontAwesome}
+                      name="heart"
+                      size="md"
+                      color="$gray700"
+                    />
                     <ButtonText
                       color="$gray700"
                       fontSize="$lg"

@@ -22,8 +22,8 @@ const NavCard = ({
         borderColor="#ebeae8" //TODO: change to fixed color later
         borderRadius={15}
         padding={30}
-        width={280}
-        height={200}
+        width={400}
+        height={300}
         alignItems="center"
         justifyContent="center"
         backgroundColor="$white"
@@ -37,20 +37,19 @@ const NavCard = ({
         <VStack alignItems="center">
           <Icon
             as={IconComponent}
-            size={45}
+            size={80}
             color="$primary700"
             style={{ marginBottom: 20 }}
           />
 
-          <Heading
-            size="lg"
+          <Text
             color="$primary700"
             textAlign="center"
-            style={{ marginBottom: 5 }}
+            style={{ marginBottom: 15, fontSize: 30, fontWeight: "bold" }}
           >
             {title}
-          </Heading>
-          <Text fontSize="$md" color="$gray600" textAlign="center">
+          </Text>
+          <Text fontSize="$lg" color="$gray600" textAlign="center">
             {description}
           </Text>
         </VStack>

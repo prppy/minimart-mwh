@@ -2,6 +2,7 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { Box } from "@gluestack-ui/themed";
 import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 export default function TabLayout() {
   return (
@@ -19,6 +20,7 @@ export default function TabLayout() {
         <Tabs.Screen name="feedback" options={{ title: "Feedback" }} />
         <Tabs.Screen name="profile" options={{ title: "Profile" }} />
       </Tabs>
+      <Footer />
     </Box>
   );
 }

@@ -13,7 +13,8 @@ import {
   useBreakpointValue,
   Icon,
 } from "@gluestack-ui/themed";
-import { FaSearch } from "react-icons/fa";
+// import { FaSearch } from "react-icons/fa";
+import { SearchIcon } from "@gluestack-ui/themed";
 import Sidebar from "../../components/Sidebar.jsx";
 import ProductCard from "../../components/ProductCard.jsx";
 import products from "../../data/products.js";
@@ -122,7 +123,7 @@ const Catalogue = () => {
               mr="$6"
             >
               <InputSlot pl="$4">
-                <Icon as={FaSearch} size="sm" color="$gray500" />
+                <Icon as={SearchIcon} size="sm" color="$gray500" />
               </InputSlot>
               <InputField
                 placeholder="Search"
