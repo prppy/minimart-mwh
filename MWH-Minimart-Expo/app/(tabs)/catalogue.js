@@ -35,7 +35,7 @@ const Catalogue = () => {
     "Drinks",
   ]);
   const [selectedTypes, setSelectedTypes] = useState(["Showcase"]);
-  const [points, setPoints] = useState(4000);
+  const [points, setPoints] = useState(500);
   const [sortOrder, setSortOrder] = useState("");
 
   // 4 columns on web, 2 on mobile
@@ -89,99 +89,103 @@ const Catalogue = () => {
 
   return (
     <Box flex={1} backgroundColor="$gray50">
-      <HStack
-        alignItems="flex-start"
-        justifyContent="flex-start"
-        px="$8"
-        py="$6"
-        space="$8"
-      >
-        <Sidebar
-          allCategories={allCategories}
-          selectedCategories={selectedCategories}
-          handleCategoryChange={handleCategoryChange}
-          allTypes={allTypes}
-          selectedTypes={selectedTypes}
-          handleTypeChange={handleTypeChange}
-          points={points}
-          setPoints={setPoints}
-        />
-        <VStack flex={1} space="$6">
-          {/* Controls Section */}
-          <HStack
-            alignItems="center"
-            justifyContent="flex-end"
-            mb="$6"
-            space="$4"
-          >
-            <Input
-              borderRadius="$full"
-              borderColor="$gray300"
-              backgroundColor="$white"
-              width={360}
-              height={44}
-              mr="$6"
-            >
-              <InputSlot pl="$4">
-                <Icon as={SearchIcon} size="sm" color="$gray500" />
-              </InputSlot>
-              <InputField
-                placeholder="Search"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                pl="$10"
-                pr="$4"
-                py="$2"
-                fontSize="$lg"
-              />
-            </Input>
-            <HStack space="$2">
-              <Button
-                variant={sortOrder === "asc" ? "solid" : "outline"}
-                size="md"
-                backgroundColor={sortOrder === "asc" ? "$gray200" : "$white"}
-                borderColor="$gray300"
-                borderRadius="$full"
-                px="$5"
-                py="$2"
-                onPress={() => setSortOrder("asc")}
-              >
-                <ButtonText color="$gray800" fontWeight="$semibold">
-                  Point ascending
-                </ButtonText>
-              </Button>
-              <Button
-                variant={sortOrder === "desc" ? "solid" : "outline"}
-                size="md"
-                backgroundColor={sortOrder === "desc" ? "$gray200" : "$white"}
-                borderColor="$gray300"
-                borderRadius="$full"
-                px="$5"
-                py="$2"
-                onPress={() => setSortOrder("desc")}
-              >
-                <ButtonText color="$gray800" fontWeight="$semibold">
-                  Points descending
-                </ButtonText>
-              </Button>
-            </HStack>
-          </HStack>
-          {/* Product Grid */}
-          <FlatList
-            data={filteredAndSortedProducts}
-            renderItem={renderProduct}
-            keyExtractor={(item) => item.id.toString()}
-            numColumns={numColumns}
-            columnWrapperStyle={{ justifyContent: "flex-start" }}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingBottom: 40,
-              alignItems: "flex-start",
-            }}
-            style={{ width: "100%" }}
+      <VStack px="$8" py="$6" space="$6">
+        {/* Filter and Search Section */}
+        <HStack alignItems="flex-start" space="$6">
+          <Sidebar
+            allCategories={allCategories}
+            selectedCategories={selectedCategories}
+            handleCategoryChange={handleCategoryChange}
+            allTypes={allTypes}
+            selectedTypes={selectedTypes}
+            handleTypeChange={handleTypeChange}
+            points={points}
+            setPoints={setPoints}
           />
-        </VStack>
-      </HStack>
+          <VStack flex={1} space="$4">
+            {/* Controls Section */}
+            <HStack alignItems="center" justifyContent="space-between" mb="$2" space="$4">
+              <Input
+                borderRadius="$full"
+                borderColor="$gray300"
+                backgroundColor="$white"
+                width="100%"
+                maxWidth={400}
+                height={44}
+                shadowColor="$gray300"
+                shadowOffset={{ width: 0, height: 2 }}
+                shadowOpacity={0.12}
+                shadowRadius={6}
+              >
+                <InputSlot pl="$4">
+                  <Icon as={SearchIcon} size="sm" color="$gray500" />
+                </InputSlot>
+                <InputField
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  pl="$10"
+                  pr="$4"
+                  py="$2"
+                  fontSize="$lg"
+                />
+              </Input>
+              <HStack space="$2">
+                <Button
+                  variant={sortOrder === "asc" ? "solid" : "outline"}
+                  size="md"
+                  backgroundColor={sortOrder === "asc" ? "$gray200" : "$white"}
+                  borderColor="$gray300"
+                  borderRadius="$full"
+                  px="$5"
+                  py="$2"
+                  onPress={() => setSortOrder("asc")}
+                  shadowColor="$gray300"
+                  shadowOffset={{ width: 0, height: 2 }}
+                  shadowOpacity={0.12}
+                  shadowRadius={6}
+                >
+                  <ButtonText color="$gray800" fontWeight="$semibold">
+                    Point ascending
+                  </ButtonText>
+                </Button>
+                <Button
+                  variant={sortOrder === "desc" ? "solid" : "outline"}
+                  size="md"
+                  backgroundColor={sortOrder === "desc" ? "$gray200" : "$white"}
+                  borderColor="$gray300"
+                  borderRadius="$full"
+                  px="$5"
+                  py="$2"
+                  onPress={() => setSortOrder("desc")}
+                  shadowColor="$gray300"
+                  shadowOffset={{ width: 0, height: 2 }}
+                  shadowOpacity={0.12}
+                  shadowRadius={6}
+                >
+                  <ButtonText color="$gray800" fontWeight="$semibold">
+                    Points descending
+                  </ButtonText>
+                </Button>
+              </HStack>
+            </HStack>
+            {/* Product Grid */}
+            <FlatList
+              data={filteredAndSortedProducts}
+              renderItem={renderProduct}
+              keyExtractor={(item) => item.id.toString()}
+              numColumns={numColumns}
+              columnWrapperStyle={{ justifyContent: "flex-start" }}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingBottom: 40,
+                alignItems: "flex-start",
+              }}
+              style={{ width: "100%" }}
+            />
+          </VStack>
+        </HStack>
+      </VStack>
     </Box>
   );
 };
