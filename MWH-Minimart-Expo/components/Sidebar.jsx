@@ -77,7 +77,7 @@ const Sidebar = ({
           </HStack>
           <VStack space="$2">
             {allCategories.map((category) => (
-              <HStack key={category} alignItems="center" space="$2">
+              <HStack key={category} alignItems="center" space="$4">
                 <Checkbox
                   value={category}
                   isChecked={selectedCategories.includes(category)}
@@ -127,7 +127,7 @@ const Sidebar = ({
           </HStack>
           <VStack space="$2">
             {allTypes.map((type) => (
-              <HStack key={type} alignItems="center" space="$2">
+              <HStack key={type} alignItems="center" space="$4">
                 <Checkbox
                   value={type}
                   isChecked={selectedTypes.includes(type)}
@@ -150,14 +150,17 @@ const Sidebar = ({
             Points
           </Heading>
           <VStack space="$2">
+            <Text size="sm" color="$gray700" mb="$1">Filter by maximum points</Text>
             <Slider
-              defaultValue={[points]}
-              max={4000}
+              max={500}
               min={0}
-              step={100}
-              value={[points]}
-              onChange={(values) => setPoints(values[0])}
-              size="md"
+              step={10}
+              value={points}
+              onChange={(value) => setPoints(value)}
+              size="lg"
+              backgroundColor="$gray100"
+              borderRadius={8}
+              height={8}
             >
               <SliderTrack>
                 <SliderFilledTrack backgroundColor="$blue600" />
@@ -165,12 +168,9 @@ const Sidebar = ({
               <SliderThumb backgroundColor="$blue600" />
             </Slider>
             <HStack justifyContent="space-between" mt="$1">
-              <Text size="sm" color="$gray500">
-                0
-              </Text>
-              <Text size="sm" color="$gray500">
-                {points}pts
-              </Text>
+              <Text size="sm" color="$gray500">0</Text>
+              <Text size="sm" color="$blue800" fontWeight="$bold">{points}pts</Text>
+              <Text size="sm" color="$gray500">500</Text>
             </HStack>
           </VStack>
         </VStack>
