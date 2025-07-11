@@ -12,7 +12,7 @@
     "@expo/metro-runtime": "~5.0.4",
     "@gluestack-style/react": "^1.0.57",
     "@gluestack-ui/config": "^1.1.20",
-    "@gluestack-ui/themed": "^1.1.73",
+    "@gluestack-ui/themed": "^1.1.73", 
     "@react-native-aria/focus": "^0.2.9",
     "@react-native-aria/interactions": "^0.2.16",
     "@react-native-aria/overlays": "^0.3.15",
