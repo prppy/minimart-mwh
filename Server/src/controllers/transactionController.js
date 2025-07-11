@@ -1,5 +1,6 @@
-const { validationResult } = require('express-validator');
-const { prisma } = require('../lib/db');
+// controllers/transactionController.js
+import { validationResult } from 'express-validator';
+import { prisma } from '../lib/db';
 
 class TransactionsController {
   // Get user's transaction history
@@ -446,6 +447,227 @@ class TransactionsController {
       });
     }
   }
+
+  // Create abscondence transaction
+  static async createAbscondence(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ 
+          error: { message: 'Validation failed', details: errors.array() }
+        });
+      }
+
+      const { userId, reason, pointsPenalty = 0 } = req.body;
+      const officerId = req.user.userId;
+
+      // Verify resident exists
+      const resident = await prisma.resident.findUnique({
+        where: { userId: parseInt(userId) }
+      });
+
+      if (!resident) {
+        return res.status(404).json({ 
+          error: { message: 'Resident not found' }
+        });
+      }
+
+      // Create abscondence transaction
+      const result = await prisma.$transaction(async (tx) => {
+        // Create transaction
+        const transaction = await tx.transaction.create({
+          data: {
+            userId: parseInt(userId),
+            officerId: officerId,
+            pointsChange: -pointsPenalty,
+            transactionType: 'abscondence'
+          }
+        });
+
+        // Create abscondence record
+        const abscondence = await tx.abscondence.create({
+          data: {
+            transactionId: transaction.id,
+            reason
+          }
+        });
+
+        // Update resident points and last abscondence date
+        const updatedResident = await tx.resident.update({
+          where: { userId: parseInt(userId) },
+          data: {
+            currentPoints: {
+              decrement: pointsPenalty
+            },
+            lastAbscondence: new Date()
+          }
+        });
+
+        return { transaction, abscondence, updatedResident };
+      });
+
+      res.status(201).json({
+        success: true,
+        data: {
+          transaction: result.transaction,
+          abscondence: result.abscondence,
+          pointsPenalty,
+          remainingPoints: result.updatedResident.currentPoints
+        }
+      });
+
+    } catch (error) {
+      console.error('Create abscondence error:', error);
+      res.status(500).json({ 
+        error: { message: 'Internal server error' }
+      });
+    }
+  }
+
+  // Get transaction analytics
+  static async getTransactionAnalytics(req, res) {
+    try {
+      const { period = 'month' } = req.query;
+
+      const now = new Date();
+      let startDate;
+
+      switch (period) {
+        case 'week':
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'month':
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          break;
+        case 'year':
+          startDate = new Date(now.getFullYear(), 0, 1);
+          break;
+        default:
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      }
+
+      const [overallStats, typeStats] = await Promise.all([
+        // Overall statistics
+        prisma.transaction.aggregate({
+          where: {
+            transactionDate: {
+              gte: startDate
+            }
+          },
+          _count: {
+            id: true
+          },
+          _sum: {
+            pointsChange: true
+          }
+        }),
+
+        // Statistics by transaction type
+        prisma.transaction.groupBy({
+          by: ['transactionType'],
+          where: {
+            transactionDate: {
+              gte: startDate
+            }
+          },
+          _count: {
+            id: true
+          },
+          _sum: {
+            pointsChange: true
+          }
+        })
+      ]);
+
+      res.json({
+        success: true,
+        data: {
+          period,
+          overall: {
+            totalTransactions: overallStats._count.id,
+            totalPointsFlow: overallStats._sum.pointsChange || 0
+          },
+          byType: typeStats
+        }
+      });
+
+    } catch (error) {
+      console.error('Get transaction analytics error:', error);
+      res.status(500).json({ 
+        error: { message: 'Internal server error' }
+      });
+    }
+  }
+
+  // Get transaction by ID
+  static async getTransactionById(req, res) {
+    try {
+      const { id } = req.params;
+
+      const transaction = await prisma.transaction.findUnique({
+        where: { id: parseInt(id) },
+        include: {
+          user: {
+            select: {
+              userName: true,
+              userRole: true
+            }
+          },
+          officer: {
+            select: {
+              userName: true
+            }
+          },
+          redemptions: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  productName: true,
+                  points: true,
+                  imageUrl: true
+                }
+              }
+            }
+          },
+          completions: {
+            include: {
+              task: {
+                select: {
+                  id: true,
+                  taskName: true,
+                  points: true,
+                  taskCategory: {
+                    select: {
+                      taskCategoryName: true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          abscondence: true
+        }
+      });
+
+      if (!transaction) {
+        return res.status(404).json({ 
+          error: { message: 'Transaction not found' }
+        });
+      }
+
+      res.json({
+        success: true,
+        data: transaction
+      });
+
+    } catch (error) {
+      console.error('Get transaction error:', error);
+      res.status(500).json({ 
+        error: { message: 'Internal server error' }
+      });
+    }
+  }
 }
 
-module.exports = TransactionsController;
+export default TransactionsController;

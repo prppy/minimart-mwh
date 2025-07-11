@@ -1,10 +1,10 @@
 // routes/transactions.js
-const express = require('express');
-const { body, param, query } = require('express-validator');
-const TransactionsController = require('../controllers/transactionsController');
-const { authenticateToken, requireOfficerOrAdmin, requireOwnershipOrStaff } = require('../middleware/auth');
+import { Router } from 'express';
+import { body, param, query } from 'express-validator';
+import { getAllTransactions, getUserTransactions, getPointsSummary, createRedemption, createCompletion } from '../controllers/transactionsController';
+import { authenticateToken, requireOfficerOrAdmin, requireOwnershipOrStaff } from '../middleware/auth';
 
-const transactionRouter = express.Router();
+const transactionRouter = Router();
 
 // Validation middleware
 const redemptionValidation = [
@@ -35,8 +35,8 @@ const completionValidation = [
 ];
 
 // Routes
-transactionRouter.get('/', authenticateToken, requireOfficerOrAdmin, TransactionsController.getAllTransactions);
-transactionRouter.get('/user/:userId', authenticateToken, requireOwnershipOrStaff, TransactionsController.getUserTransactions);
-transactionRouter.get('/user/:userId/summary', authenticateToken, requireOwnershipOrStaff, TransactionsController.getPointsSummary);
-transactionRouter.post('/redemption', authenticateToken, requireOfficerOrAdmin, redemptionValidation, TransactionsController.createRedemption);
-transactionRouter.post('/completion', authenticateToken, requireOfficerOrAdmin, completionValidation, TransactionsController.createCompletion);
+transactionRouter.get('/', authenticateToken, requireOfficerOrAdmin, getAllTransactions);
+transactionRouter.get('/user/:userId', authenticateToken, requireOwnershipOrStaff, getUserTransactions);
+transactionRouter.get('/user/:userId/summary', authenticateToken, requireOwnershipOrStaff, getPointsSummary);
+transactionRouter.post('/redemption', authenticateToken, requireOfficerOrAdmin, redemptionValidation, createRedemption);
+transactionRouter.post('/completion', authenticateToken, requireOfficerOrAdmin, completionValidation, createCompletion);

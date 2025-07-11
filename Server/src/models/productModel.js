@@ -1,5 +1,5 @@
 // models/Product.js
-const { prisma } = require('../lib/db');
+import { prisma } from '../lib/db';
 
 class ProductModel {
   /**
@@ -632,4 +632,4 @@ class ProductModel {
   }
 }
 
-module.exports = ProductModel;
+export default ProductModel;

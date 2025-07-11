@@ -1,5 +1,5 @@
 // models/Resident.js
-const { prisma } = require('../lib/db');
+import { prisma } from '../lib/db';
 
 class ResidentModel {
   /**
@@ -480,4 +480,4 @@ class ResidentModel {
   }
 }
 
-module.exports = ResidentModel;
+export default ResidentModel;

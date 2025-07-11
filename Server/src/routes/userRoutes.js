@@ -1,8 +1,8 @@
 // routes/users.js
 const userRouter = express.Router();
-const UsersController = require('../controllers/usersController');
+import { getAllUsers, getUserById, updateUser, deleteUser } from '../controllers/usersController';
 
-userRouter.get('/', authenticateToken, requireOfficerOrAdmin, UsersController.getAllUsers);
-userRouter.get('/:id', authenticateToken, requireOwnershipOrStaff, UsersController.getUserById);
-userRouter.put('/:id', authenticateToken, requireOwnershipOrStaff, UsersController.updateUser);
-userRouter.delete('/:id', authenticateToken, requireOfficerOrAdmin, UsersController.deleteUser);
+userRouter.get('/', authenticateToken, requireOfficerOrAdmin, getAllUsers);
+userRouter.get('/:id', authenticateToken, requireOwnershipOrStaff, getUserById);
+userRouter.put('/:id', authenticateToken, requireOwnershipOrStaff, updateUser);
+userRouter.delete('/:id', authenticateToken, requireOfficerOrAdmin, deleteUser);

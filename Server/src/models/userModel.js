@@ -1,6 +1,6 @@
 // models/User.js
-const bcrypt = require('bcryptjs');
-const { prisma } = require('../lib/db');
+import { genSalt, hash, compare } from 'bcryptjs';
+import { prisma } from '../lib/db';
 
 class UserModel {
   /**
@@ -50,8 +50,8 @@ class UserModel {
     const { userName, password, userRole, ...roleData } = userData;
     
     // Hash password
-    const salt = await bcrypt.genSalt(12);
-    const passwordHash = await bcrypt.hash(password, salt);
+    const salt = await genSalt(12);
+    const passwordHash = await hash(password, salt);
 
     return prisma.$transaction(async (tx) => {
       // Create user
@@ -152,7 +152,7 @@ class UserModel {
    * Validate user password
    */
   static async validatePassword(user, password) {
-    return bcrypt.compare(password, user.passwordHash);
+    return compare(password, user.passwordHash);
   }
 
   /**
@@ -234,14 +234,14 @@ class UserModel {
     }
 
     // Verify current password
-    const isValid = await bcrypt.compare(currentPassword, user.passwordHash);
+    const isValid = await compare(currentPassword, user.passwordHash);
     if (!isValid) {
       throw new Error('Current password is incorrect');
     }
 
     // Hash new password
-    const salt = await bcrypt.genSalt(12);
-    const newPasswordHash = await bcrypt.hash(newPassword, salt);
+    const salt = await genSalt(12);
+    const newPasswordHash = await hash(newPassword, salt);
 
     return prisma.user.update({
       where: { id: userId },
@@ -303,4 +303,4 @@ class UserModel {
   }
 }
 
-module.exports = UserModel;
+export default UserModel;
