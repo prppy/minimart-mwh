@@ -1,6 +1,6 @@
 // models/Transaction.js
-const { prisma } = require('../lib/db');
-const ResidentModel = require('./Resident');
+import { prisma } from '../lib/db';
+import ResidentModel from './Resident';
 
 class TransactionModel {
   /**
@@ -688,4 +688,4 @@ class TransactionModel {
   }
 }
 
-module.exports = TransactionModel;
+export default TransactionModel;

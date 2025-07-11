@@ -1,8 +1,8 @@
 // routes/leaderboard.js
 const leaderboardRouter = express.Router();
-const LeaderboardController = require('../controllers/leaderboardController');
+import { getLeaderboard, getLeaderboardStats, getLeaderboardByBatch, getUserPosition } from '../controllers/leaderboardController';
 
-leaderboardRouter.get('/', authenticateToken, LeaderboardController.getLeaderboard);
-leaderboardRouter.get('/stats', authenticateToken, LeaderboardController.getLeaderboardStats);
-leaderboardRouter.get('/batch/:batchNumber', authenticateToken, LeaderboardController.getLeaderboardByBatch);
-leaderboardRouter.get('/user/:userId/position', authenticateToken, requireOwnershipOrStaff, LeaderboardController.getUserPosition);
+leaderboardRouter.get('/', authenticateToken, getLeaderboard);
+leaderboardRouter.get('/stats', authenticateToken, getLeaderboardStats);
+leaderboardRouter.get('/batch/:batchNumber', authenticateToken, getLeaderboardByBatch);
+leaderboardRouter.get('/user/:userId/position', authenticateToken, requireOwnershipOrStaff, getUserPosition);

@@ -1,22 +1,14 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const compression = require('compression');
-const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
+import express, { json, urlencoded } from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
 require('dotenv').config();
 
-const { connectDB } = require('./lib/db');
+import { connectDB } from './lib/db';
 
-// Import routes
-const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/users');
-const productRoutes = require('./routes/products');
-const categoryRoutes = require('./routes/categories');
-const taskRoutes = require('./routes/tasks');
-const transactionRoutes = require('./routes/transactions');
-const leaderboardRoutes = require('./routes/leaderboard');
-const feedbackRoutes = require('./routes/feedback');
+import mainRoutes from './routes/mainRoutes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,21 +35,15 @@ app.use(cors({
 app.use(compression());
 app.use(morgan('combined'));
 app.use(limiter);
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(json({ limit: '10mb' }));
+app.use(urlencoded({ extended: true, limit: '10mb' }));
 
 // Static files for images
 app.use('/uploads', express.static('uploads'));
 
 // API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/tasks', taskRoutes);
-app.use('/api/transactions', transactionRoutes);
-app.use('/api/leaderboard', leaderboardRoutes);
-app.use('/api/feedback', feedbackRoutes);
+app.use('/api', mainRoutes);
+
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -138,4 +124,4 @@ const startServer = async () => {
 
 startServer();
 
-module.exports = app;
+export default app;

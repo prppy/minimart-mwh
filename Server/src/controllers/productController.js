@@ -1,5 +1,6 @@
-const { validationResult } = require('express-validator');
-const { prisma } = require('../lib/db');
+  // controllers/productController.js
+import { validationResult } from 'express-validator';
+import { prisma } from '../lib/db';
 
 class ProductsController {
   // Get all products with filtering (matches your frontend filtering)
@@ -386,6 +387,347 @@ class ProductsController {
       });
     }
   }
+
+  // Search products
+  static async searchProducts(req, res) {
+    try {
+      const { q: search, limit = 20, includeUnavailable = false } = req.query;
+
+      if (!search) {
+        return res.status(400).json({ 
+          error: { message: 'Search query is required' }
+        });
+      }
+
+      const where = {
+        OR: [
+          {
+            productName: {
+              contains: search,
+              mode: 'insensitive'
+            }
+          },
+          {
+            productDescription: {
+              contains: search,
+              mode: 'insensitive'
+            }
+          },
+          {
+            category: {
+              categoryName: {
+                contains: search,
+                mode: 'insensitive'
+              }
+            }
+          }
+        ]
+      };
+
+      if (includeUnavailable !== 'true') {
+        where.available = true;
+      }
+
+      const products = await prisma.product.findMany({
+        where,
+        include: {
+          category: {
+            select: {
+              id: true,
+              categoryName: true
+            }
+          },
+          _count: {
+            select: {
+              redemptions: true
+            }
+          }
+        },
+        orderBy: [
+          { productName: 'asc' }
+        ],
+        take: parseInt(limit)
+      });
+
+      res.json({
+        success: true,
+        data: products
+      });
+
+    } catch (error) {
+      console.error('Search products error:', error);
+      res.status(500).json({ 
+        error: { message: 'Internal server error' }
+      });
+    }
+  }
+
+  // Get product analytics
+  static async getProductAnalytics(req, res) {
+    try {
+      const { id } = req.params;
+      const { period = 'month' } = req.query;
+
+      const now = new Date();
+      let startDate;
+
+      switch (period) {
+        case 'week':
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'month':
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+          break;
+        case 'year':
+          startDate = new Date(now.getFullYear(), 0, 1);
+          break;
+        default:
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      }
+
+      const [product, redemptions, periodRedemptions] = await Promise.all([
+        // Basic product info
+        prisma.product.findUnique({
+          where: { id: parseInt(id) },
+          include: {
+            category: {
+              select: {
+                id: true,
+                categoryName: true
+              }
+            }
+          }
+        }),
+        
+        // All-time redemptions
+        prisma.redemption.findMany({
+          where: { productId: parseInt(id) },
+          include: {
+            transaction: {
+              include: {
+                user: {
+                  select: {
+                    userName: true
+                  }
+                }
+              }
+            }
+          },
+          orderBy: {
+            transaction: {
+              transactionDate: 'desc'
+            }
+          }
+        }),
+
+        // Period redemptions
+        prisma.redemption.findMany({
+          where: {
+            productId: parseInt(id),
+            transaction: {
+              transactionDate: {
+                gte: startDate
+              }
+            }
+          },
+          include: {
+            transaction: true
+          }
+        })
+      ]);
+
+      if (!product) {
+        return res.status(404).json({ 
+          error: { message: 'Product not found' }
+        });
+      }
+
+      // Calculate analytics
+      const totalRedemptions = redemptions.length;
+      const totalQuantityRedeemed = redemptions.reduce((sum, r) => sum + r.productQuantity, 0);
+      const periodRedemptionsCount = periodRedemptions.length;
+      const periodQuantityRedeemed = periodRedemptions.reduce((sum, r) => sum + r.productQuantity, 0);
+      
+      // Revenue in points
+      const totalPointsEarned = totalQuantityRedeemed * product.points;
+      const periodPointsEarned = periodQuantityRedeemed * product.points;
+
+      // Daily breakdown for the period
+      const dailyBreakdown = {};
+      periodRedemptions.forEach(redemption => {
+        const date = redemption.transaction.transactionDate.toISOString().split('T')[0];
+        if (!dailyBreakdown[date]) {
+          dailyBreakdown[date] = { redemptions: 0, quantity: 0 };
+        }
+        dailyBreakdown[date].redemptions += 1;
+        dailyBreakdown[date].quantity += redemption.productQuantity;
+      });
+
+      res.json({
+        success: true,
+        data: {
+          product,
+          analytics: {
+            allTime: {
+              redemptions: totalRedemptions,
+              quantityRedeemed: totalQuantityRedeemed,
+              pointsEarned: totalPointsEarned
+            },
+            period: {
+              redemptions: periodRedemptionsCount,
+              quantityRedeemed: periodQuantityRedeemed,
+              pointsEarned: periodPointsEarned,
+              dailyBreakdown
+            },
+            recentRedemptions: redemptions.slice(0, 10)
+          }
+        }
+      });
+
+    } catch (error) {
+      console.error('Get product analytics error:', error);
+      res.status(500).json({ 
+        error: { message: 'Internal server error' }
+      });
+    }
+  }
+
+  // Get product statistics
+  static async getProductStatistics(req, res) {
+    try {
+      const [overallStats, categoryStats, typeStats] = await Promise.all([
+        // Overall product statistics
+        prisma.product.aggregate({
+          _count: {
+            id: true
+          },
+          _avg: {
+            points: true
+          },
+          _max: {
+            points: true
+          },
+          _min: {
+            points: true
+          },
+          where: {
+            available: true
+          }
+        }),
+
+        // Statistics by category
+        prisma.product.groupBy({
+          by: ['categoryId'],
+          where: {
+            available: true,
+            categoryId: {
+              not: null
+            }
+          },
+          _count: {
+            id: true
+          },
+          _avg: {
+            points: true
+          }
+        }),
+
+        // Statistics by type
+        prisma.product.groupBy({
+          by: ['productType'],
+          where: {
+            available: true
+          },
+          _count: {
+            id: true
+          },
+          _avg: {
+            points: true
+          }
+        })
+      ]);
+
+      // Get category names for category stats
+      const categoryStatsWithNames = await Promise.all(
+        categoryStats.map(async (stat) => {
+          const category = await prisma.category.findUnique({
+            where: { id: stat.categoryId },
+            select: { categoryName: true }
+          });
+          return {
+            ...stat,
+            categoryName: category?.categoryName || 'Unknown'
+          };
+        })
+      );
+
+      res.json({
+        success: true,
+        data: {
+          overall: {
+            totalProducts: overallStats._count.id,
+            avgPoints: Math.round(overallStats._avg.points || 0),
+            maxPoints: overallStats._max.points || 0,
+            minPoints: overallStats._min.points || 0
+          },
+          byCategory: categoryStatsWithNames,
+          byType: typeStats
+        }
+      });
+
+    } catch (error) {
+      console.error('Get product statistics error:', error);
+      res.status(500).json({ 
+        error: { message: 'Internal server error' }
+      });
+    }
+  }
+
+  // Get low stock products (for physical products)
+  static async getLowStock(req, res) {
+    try {
+      const { threshold = 10 } = req.query;
+      
+      // This would require a stock field in the schema
+      // For now, return products that haven't been redeemed recently
+      const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      
+      const products = await prisma.product.findMany({
+        where: {
+          available: true,
+          productType: 'physical',
+          redemptions: {
+            none: {
+              transaction: {
+                transactionDate: {
+                  gte: oneWeekAgo
+                }
+              }
+            }
+          }
+        },
+        include: {
+          category: true,
+          _count: {
+            select: {
+              redemptions: true
+            }
+          }
+        }
+      });
+
+      res.json({
+        success: true,
+        data: products
+      });
+
+    } catch (error) {
+      console.error('Get low stock products error:', error);
+      res.status(500).json({ 
+        error: { message: 'Internal server error' }
+      });
+    }
+  }
 }
 
-module.exports = ProductsController;
+export default ProductsController;

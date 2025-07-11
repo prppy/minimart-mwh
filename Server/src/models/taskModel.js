@@ -1,5 +1,5 @@
 // models/Task.js
-const { prisma } = require('../lib/db');
+import { prisma } from '../lib/db';
 
 class TaskModel {
   /**
