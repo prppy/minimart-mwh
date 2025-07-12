@@ -9,16 +9,16 @@ const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN
 
 export const generateAccessToken = async (req, res, next) => {
     try {
-        const { userId } = res.locals
+        const { User_ID } = res.locals
 
-        if (!userId) {
+        if (!User_ID) {
             return res.status(404).json({
                 "message": "User not found in request"
             })
         }
         
         // create jwt
-        const accessToken = jwt.sign({ userId }, ACCESS_TOKEN_SECRET, {
+        const accessToken = jwt.sign({ User_ID }, ACCESS_TOKEN_SECRET, {
             expiresIn: ACCESS_TOKEN_EXPIRES_IN
         })
 
@@ -35,15 +35,15 @@ export const generateAccessToken = async (req, res, next) => {
 
 export const generateRefreshToken = async (req, res, next) => {
     try {
-        const { userId } = res.locals
+        const { User_ID } = res.locals
 
-        if (!userId) {
+        if (!User_ID) {
             return res.status(404).json({
                 "message": "User not found in request"
             })
         }
 
-        const refreshToken = jwt.sign({ userId }, REFRESH_TOKEN_SECRET, {
+        const refreshToken = jwt.sign({ User_ID }, REFRESH_TOKEN_SECRET, {
             expiresIn: REFRESH_TOKEN_EXPIRES_IN,
         })
 
@@ -69,7 +69,7 @@ export const verifyAccessToken = async (req, res, next) => {
         const accessToken = authHeader.split(" ")[1]
 
         const accessTokenPayload = jwt.verify(accessToken, ACCESS_TOKEN_SECRET)
-        res.locals.userId = accessTokenPayload.userId
+        res.locals.User_ID = accessTokenPayload.User_ID
 
         next()
 
@@ -102,7 +102,7 @@ export const verifyRefreshToken = async (req, res, next) => {
         }
 
         const refreshTokenPayload = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
-        res.locals.userId = refreshTokenPayload.userId;
+        res.locals.User_ID = refreshTokenPayload.User_ID;
 
         next();
 

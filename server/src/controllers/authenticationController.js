@@ -1,19 +1,21 @@
 import * as userModel from "../models/userModel.js";
 
-export const createUser = async (req, res, next) => {
+// create developer in system
+export const createDeveloper = async (req, res, next) => {
   try {
-    const { username } = req.body
-    const { hashedPassword } = res.locals
+    const { User_Name } = req.body
+    const { Password_Hash } = res.locals
+    const User_Role = "developer"
 
-    if (!username || !hashedPassword) {
+    if (!User_Name || !Password_Hash) {
       res.status(404).json({
         "message": "missing required fields"
       })
     }
 
-    const userId = await userModel.insertUser(username, hashedPassword)
+    const User_ID = await userModel.insertUser(User_Name, Password_Hash, User_Role)
 
-    res.locals.userId = userId
+    res.locals.User_ID = User_ID
     next()
 
   } catch (e) {
@@ -24,45 +26,46 @@ export const createUser = async (req, res, next) => {
   }
 }
 
-export const checkUserExists = async (req, res, next) => {
-  try {
-    const { username } = req.body
+// temporarily not in service
+// export const checkUserExists = async (req, res, next) => {
+//   try {
+//     const { username } = req.body
 
-    if (!username) {
-      return res.status(404).json({
-        "message": "missing required fields"
-      })
-    }
+//     if (!username) {
+//       return res.status(404).json({
+//         "message": "missing required fields"
+//       })
+//     }
 
-    const selectedUser = await userModel.selectUserByUsername(username)
+//     const selectedUser = await userModel.selectUserByUsername(username)
 
-    if (selectedUser != null) {
-      return res.status(404).json({
-        "message": "User already exists"
-      })
-    }
+//     if (selectedUser != null) {
+//       return res.status(404).json({
+//         "message": "User already exists"
+//       })
+//     }
 
-    next()
+//     next()
 
-  } catch (e) {
-    console.error(e.message)
-    res.status(400).json({
-      "message": "An error has occurred"
-    })
-  }
-}
+//   } catch (e) {
+//     console.error(e.message)
+//     res.status(400).json({
+//       "message": "An error has occurred"
+//     })
+//   }
+// }
 
 export const validateUserCredentials = async (req, res, next) => {
   try {
-    const { username } = req.body
+    const { User_Name } = req.body
 
-    if (!username) {
+    if (!User_Name) {
       return res.status(404).json({
         "message": "missing required fields"
       })
     }
 
-    const selectedUser = await userModel.selectUserByUsername(username)
+    const selectedUser = await userModel.selectUserByUsername(User_Name)
 
     if (selectedUser == null) {
       return res.status(404).json({
@@ -70,8 +73,8 @@ export const validateUserCredentials = async (req, res, next) => {
       })
     }
 
-    res.locals.userId = selectedUser.id
-    res.locals.hashedPassword = selectedUser.password
+    res.locals.User_ID = selectedUser.User_ID
+    res.locals.Password_Hash = selectedUser.Password_Hash
 
     next()
 

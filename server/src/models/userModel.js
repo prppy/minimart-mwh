@@ -4,23 +4,29 @@ import { PrismaClient } from "../generated/prisma/client.js"
 const prisma = new PrismaClient();
 
 /**
- * Add user to rehabify_user
+ * Inserts user to MWH_User table; generic
  * @param {*} username 
  * @param {*} hashedpassword 
  */
-export const insertUser = async (username, hashedpassword) => {
+export const insertUser = async (username, hashedpassword, userRole) => {
     const userData = {
-        username: username,
-        password: hashedpassword,
+        User_Name: username,
+        Password_Hash: hashedpassword,
+        User_Role: userRole,
     }
 
-    const createdUser = await prisma.rehabify_user.create({ data: userData })
+    const createdUser = await prisma.mWH_User.create({ data: userData })
 
-    return createdUser.id
+    return createdUser.User_ID
 }
 
+/**
+ * selects user from MWH_User table based on userid
+ * @param {*} username 
+ * @returns 
+ */
 export const selectUserByUsername = async (username) => {
-    const selectedUser = await prisma.rehabify_user.findFirst({
+    const selectedUser = await prisma.mWH_User.findFirst({
         where: {
             username: username
         },

@@ -16,7 +16,7 @@ dotenv.config()
  */
 export const generateHashedPassword = async (req, res, next) => {
     try {
-        const plainPassword = req.body.password
+        const plainPassword = req.body.Password_Plain
         const PEPPERED_SECRET = process.env.PEPPERED_SECRET   
 
         if (!plainPassword) {
@@ -35,7 +35,7 @@ export const generateHashedPassword = async (req, res, next) => {
         const pepperedPassword = crypto.createHmac('sha256', PEPPERED_SECRET).update(plainPassword).digest('hex')
         const hashedPassword = await argon2.hash(pepperedPassword);
         
-        res.locals.hashedPassword = hashedPassword
+        res.locals.Password_Hash = hashedPassword
         next()
 
     } catch (e) {
@@ -55,11 +55,11 @@ export const generateHashedPassword = async (req, res, next) => {
  */
 export const verifyHashedPassword = async (req, res, next) => {
     try {
-        const inputPassword = req.body.password
-        const { hashedPassword } = res.locals
+        const Password_Plain = req.body.Password_Plain
+        const { Password_Hash } = res.locals
         const PEPPERED_SECRET = process.env.PEPPERED_SECRET  
 
-        if (!inputPassword || !hashedPassword) {
+        if (!Password_Plain || !Password_Hash) {
             res.status(404).json({
                 "message": "missing required fields"
             })
