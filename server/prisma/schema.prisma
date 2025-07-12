@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -12,4 +6,140 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model MWH_Abscondence {
+  Transaction_ID  Int             @id
+  Reason          String?
+  MWH_Transaction MWH_Transaction @relation(fields: [Transaction_ID], references: [Transaction_ID], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model MWH_Category {
+  Category_ID          Int                    @id @default(autoincrement())
+  Category_Name        String?                @db.VarChar(30)
+  MWH_Product          MWH_Product[]
+  MWH_Product_Category MWH_Product_Category[]
+}
+
+model MWH_Completion {
+  Transaction_ID  Int
+  Task_ID         Int
+  MWH_Task        MWH_Task        @relation(fields: [Task_ID], references: [Task_ID], onDelete: NoAction, onUpdate: NoAction)
+  MWH_Transaction MWH_Transaction @relation(fields: [Transaction_ID], references: [Transaction_ID], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([Transaction_ID, Task_ID])
+}
+
+model MWH_Officer {
+  User_ID       Int      @id
+  Officer_Email String?  @db.VarChar(127)
+  MWH_User      MWH_User @relation(fields: [User_ID], references: [User_ID], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model MWH_Product {
+  Product_ID           Int                    @id @default(autoincrement())
+  Product_Name         String?                @db.VarChar(31)
+  Image_URL            String?
+  Product_Description  String?
+  Points               Int?
+  Product_Type         product_type_enum?
+  Available            Boolean?
+  Category_ID          Int?
+  MWH_Category         MWH_Category?          @relation(fields: [Category_ID], references: [Category_ID], onDelete: NoAction, onUpdate: NoAction)
+  MWH_Product_Category MWH_Product_Category[]
+  MWH_Redemption       MWH_Redemption[]
+}
+
+model MWH_Product_Category {
+  Product_ID   Int
+  Category_ID  Int
+  MWH_Category MWH_Category @relation(fields: [Category_ID], references: [Category_ID], onDelete: NoAction, onUpdate: NoAction)
+  MWH_Product  MWH_Product  @relation(fields: [Product_ID], references: [Product_ID], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([Product_ID, Category_ID])
+}
+
+model MWH_Redemption {
+  Transaction_ID   Int
+  Product_Quantity Int?
+  Product_ID       Int
+  MWH_Product      MWH_Product     @relation(fields: [Product_ID], references: [Product_ID], onDelete: NoAction, onUpdate: NoAction)
+  MWH_Transaction  MWH_Transaction @relation(fields: [Transaction_ID], references: [Transaction_ID], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([Transaction_ID, Product_ID])
+}
+
+model MWH_Resident {
+  User_ID           Int       @id
+  Date_Of_Birth     DateTime? @db.Timestamp(6)
+  Date_Of_Admission DateTime? @db.Timestamp(6)
+  Last_Abscondence  DateTime? @db.Timestamp(6)
+  Current_Points    Int?
+  Batch_Number      Int?
+  Control_No        Int?
+  MWH_User          MWH_User  @relation(fields: [User_ID], references: [User_ID], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model MWH_Task {
+  Task_ID           Int                @id @default(autoincrement())
+  Task_Category_ID  Int?
+  Task_Name         String?            @db.VarChar(127)
+  Task_Description  String?
+  Points            Int?
+  Active            Boolean?
+  MWH_Completion    MWH_Completion[]
+  MWH_Task_Category MWH_Task_Category? @relation(fields: [Task_Category_ID], references: [Task_Category_ID], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model MWH_Task_Category {
+  Task_Category_ID          Int        @id @default(autoincrement())
+  Task_Category_Name        String?    @db.VarChar(50)
+  Task_Category_Description String?    @db.VarChar(100)
+  MWH_Task                  MWH_Task[]
+}
+
+model MWH_Transaction {
+  Transaction_ID                                Int                    @id @default(autoincrement())
+  Transaction_Date                              DateTime?              @db.Date
+  Points_Change                                 Int?
+  Transaction_Type                              transaction_type_enum?
+  Officer_ID                                    Int?
+  User_ID                                       Int?
+  MWH_Abscondence                               MWH_Abscondence?
+  MWH_Completion                                MWH_Completion[]
+  MWH_Redemption                                MWH_Redemption[]
+  MWH_User_MWH_Transaction_Officer_IDToMWH_User MWH_User?              @relation("MWH_Transaction_Officer_IDToMWH_User", fields: [Officer_ID], references: [User_ID], onDelete: NoAction, onUpdate: NoAction)
+  MWH_User_MWH_Transaction_User_IDToMWH_User    MWH_User?              @relation("MWH_Transaction_User_IDToMWH_User", fields: [User_ID], references: [User_ID], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model MWH_User {
+  User_ID                                              Int               @id @default(autoincrement())
+  User_Name                                            String?           @db.VarChar(127)
+  User_Role                                            user_role_enum?
+  Profile_Picture                                      Bytes?
+  Password_Hash                                        String?           @db.VarChar(255)
+  Biometric_Hash                                       String?           @db.VarChar(255)
+  Created_At                                           DateTime?         @db.Timestamp(6)
+  Updated_At                                           DateTime?         @db.Timestamp(6)
+  MWH_Officer                                          MWH_Officer?
+  MWH_Resident                                         MWH_Resident?
+  MWH_Transaction_MWH_Transaction_Officer_IDToMWH_User MWH_Transaction[] @relation("MWH_Transaction_Officer_IDToMWH_User")
+  MWH_Transaction_MWH_Transaction_User_IDToMWH_User    MWH_Transaction[] @relation("MWH_Transaction_User_IDToMWH_User")
+}
+
+enum product_type_enum {
+  physical
+  digital
+}
+
+enum transaction_type_enum {
+  completion
+  redemption
+  abscondence
+}
+
+enum user_role_enum {
+  resident
+  officer
+  developer
 }

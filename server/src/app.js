@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////
 // INCLUDES
 //////////////////////////////////////////////////////
-const express = require("express");
+import express from "express";
 
 //////////////////////////////////////////////////////
 // CREATE APP
@@ -21,7 +21,7 @@ app.get("/", (req, res) => {
   res.send("Server is running");
 });
 
-const mainRoutes = require("./routes/mainRoutes");
+import mainRoutes from "./routes/mainRoutes.js";
 
 app.use("/api", mainRoutes);
 
@@ -33,4 +33,4 @@ app.use("/", express.static('public'));
 //////////////////////////////////////////////////////
 // EXPORT APP
 //////////////////////////////////////////////////////
-module.exports = app;
+export default app;
