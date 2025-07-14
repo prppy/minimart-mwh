@@ -20,14 +20,14 @@ import * as jwtMiddleware from "../middlewares/jwtMiddleware.js";
 // );
 
 // register resident
-// router.post("/register/resident", 
-//     // authenticationController.checkUserExists, 
-//     argonMiddleware.generateHashedPassword, 
-//     authenticationController.createResident, 
-//     jwtMiddleware.generateAccessToken, 
-//     jwtMiddleware.generateRefreshToken, 
-//     authenticationController.sendAuthResponse
-// );
+router.post("/register/resident", 
+    // authenticationController.checkUserExists, 
+    argonMiddleware.generateHashedPassword, 
+    authenticationController.createResident, 
+    jwtMiddleware.generateAccessToken, 
+    jwtMiddleware.generateRefreshToken, 
+    authenticationController.sendAuthResponse
+);
 
 // register developer
 router.post("/register/developer", 
